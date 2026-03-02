@@ -8,10 +8,9 @@ import sys
 
 import PyQt5
 
-def pirnt():
-    print('hi')
 
-def create_rose_data(window, button):
+
+def create_rose_data(window, button,data):
     if window.layout() is not None:
         QWidget().setLayout(window.layout())
         button.deleteLater()
@@ -39,7 +38,7 @@ def create_rose_data(window, button):
     button_for_create = QPushButton('построить розу диаграмм', window)
     button_for_create.resize(200, 50)
     button_for_create.move(500, 700)
-    button_for_create.clicked.connect(lambda: create_rose(input_field))
+    button_for_create.clicked.connect(lambda: create_rose(input_field,data))
     button_for_create.show()
 
     label = QLabel("Введите интервал:", window)
@@ -59,11 +58,48 @@ def create_rose_data(window, button):
 
 
 
-def create_rose(input_field):
+def create_rose(input_field,data):
     interval = input_field.text()
     if interval == '':
         interval = 10
-    print(interval)
+    else:
+        interval = int(interval)
+    intervals = []
+    intervals.append(0)
+    d = 0
+    r = 1
+    while d != 180:
+        d = interval * r
+        intervals.append(d)
+        r += 1
+    print(intervals)
+    data_of_intervals = {}
+    for i in range(1,len(intervals)):
+        quantity_of_angles_in_interval = 0
+        for j in range(len(data)):
+            if data[j]["final_beta"] <= intervals[i] and data[j]["final_beta"] > intervals[i-1]:
+                quantity_of_angles_in_interval += 1
+        data_of_intervals[intervals[i]] = quantity_of_angles_in_interval
+    print(data_of_intervals)
+    quantity_of_gaps = len(data)
+    percents = {}
+    for i in data_of_intervals:
+
+        percent = (data_of_intervals[i]/quantity_of_gaps)*100
+        percent = int(percent)
+
+        percents[i] = percent
+
+    print(percents)
+
+
+
+
+
+
+
+
+
 
 
 

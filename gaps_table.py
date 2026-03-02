@@ -58,7 +58,7 @@ def table_of_gaps(path_to_json):
     button = QPushButton('построить розу диаграмм',window)
     button.resize(200,50)
     button.move(500,700)
-    button.clicked.connect(lambda: create_rose_data(window,button))
+    button.clicked.connect(lambda: create_rose_data(window,button,data))
 
 
 
