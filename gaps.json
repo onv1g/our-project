@@ -1,52 +1,14 @@
-[
-  {
+{
+  "gap_1": {
     "number_of_the_gap": 1,
     "final_beta": 45,
-    "segments": [
-      {
-        "number": 1,
-        "beta": 45,
-        "x_1": 21,
-        "y_1": 31,
-        "x_2": 70,
-        "y_2": 50
-      }
-    ]
-  },
-  {
-    "number_of_the_gap": 2,
-    "final_beta": 45,
-    "segments": [
-      {
-        "number": 1,
-        "beta": 45,
-        "x_1": 21,
-        "y_1": 31,
-        "x_2": 70,
-        "y_2": 50
-      }
-    ]
-  },
-  {
-    "number_of_the_gap": 3,
-    "final_beta": 47,
-    "segments": [
-      {
-        "number": 1,
-        "beta": 45,
-        "x_1": 21,
-        "y_1": 31,
-        "x_2": 70,
-        "y_2": 50
-      },
-      {
-        "number": 2,
-        "beta": 50,
-        "x_1": 70,
-        "y_1": 50,
-        "x_2": 79,
-        "y_2": 60
-      }
-    ]
+    "segment1": {
+      "number": 1,
+      "beta": 45,
+      "x_1": 2,
+      "y_1": 5,
+      "x_2": 2,
+      "y_2": 6
+    }
   }
-]
+}
