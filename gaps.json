@@ -29,11 +29,11 @@
   },
   {
     "number_of_the_gap": 3,
-    "final_beta": 60,
+    "final_beta": 47,
     "segments": [
       {
         "number": 1,
-        "beta": 60,
+        "beta": 45,
         "x_1": 21,
         "y_1": 31,
         "x_2": 70,
