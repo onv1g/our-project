@@ -70,4 +70,4 @@ def table_of_gaps(path_to_json):
 
 
     window.show()
-    sys.exit(app.exec())
+     sys.exit(app.exec())
