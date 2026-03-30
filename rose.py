@@ -101,14 +101,13 @@ def create_rose(input_field, data, window):
     print(values)
     print(angles)
 
-    # 1. Подготовка данных (зеркалим 0-180 на 360)
     all_angles = np.deg2rad(angles + [a + 180 for a in angles])
     all_values = values + values
     width = np.deg2rad(interval * 0.8)
-
     tick_degrees = list(range(0, 360, interval))
 
-    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw={'projection': 'polar'}, facecolor='black')
+
+    fig, ax = plt.subplots(figsize=(6, 6), subplot_kw={'projection': 'polar'}, facecolor='black')
     ax.set_facecolor('black')
     ax.bar(all_angles, all_values, width=width, color='#00FF00', edgecolor='black', alpha=0.9)
 
@@ -119,13 +118,19 @@ def create_rose(input_field, data, window):
     ax.set_theta_direction(-1)
     ax.grid(color='white', alpha=0.15, linestyle='--')
 
-    canvas = FigureCanvas(fig)
 
-    # 2. Получаем уже существующий layout окна (не создаем новый!)
+    canvas = FigureCanvas(fig)
     current_layout = window.layout()
 
-    # 3. Добавляем холст в интерфейс
-    layout.insertWidget(0, window.canvas_widget, alignment=Qt.AlignCenter)
+    if current_layout is not None:
 
-    # 4. Обновляем отрисовку
-    window.canvas_widget.draw()
+        for i in reversed(range(current_layout.count())):
+            item = current_layout.itemAt(i)
+            widget = item.widget()
+
+            if isinstance(widget, (FigureCanvas, QLineEdit)) and widget != input_field:
+                widget.setParent(None)
+
+
+        current_layout.insertWidget(0, canvas, alignment=Qt.AlignCenter)
+        canvas.draw()

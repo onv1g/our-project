@@ -5,6 +5,19 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
 from PyQt5.QtGui import QPixmap, QPen, QColor, QPainter
 from PyQt5.QtCore import Qt
 from AnglesFind import process_gaps
+import os
+import PyQt5
+
+
+dirname = os.path.dirname(PyQt5.__file__)
+plugin_path = os.path.join(dirname, 'Qt5', 'plugins', 'platforms')
+
+# Если такой папки нет, пробуем альтернативный путь (зависит от версии установки)
+if not os.path.exists(plugin_path):
+    plugin_path = os.path.join(dirname, 'Qt', 'plugins', 'platforms')
+
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
+
 
 
 class DrawingView(QGraphicsView):
