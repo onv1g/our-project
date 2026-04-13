@@ -9,13 +9,19 @@ import matplotlib.pyplot as plt
 from windrose import WindroseAxes
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from excel import create_exel_file
+from data_path import path_to_venv
 
 import PyQt5
 
-venv_path = r'C:\Users\Дети\PycharmProjects\pythonProject7\.venv'
-os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = os.path.join(venv_path, 'Lib', 'site-packages', 'PyQt5', 'Qt5', 'plugins')
+base_dir = os.path.dirname(os.path.abspath(__file__))
 
+# Собираем путь к venv относительно этой папки
+venv_path = os.path.join(base_dir, '.venv')
 
+# Исправляем путь к плагинам Qt
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = os.path.join(
+    venv_path, 'Lib', 'site-packages', 'PyQt5', 'Qt5', 'plugins')
 def create_rose_data(window, button, data):
     if window.layout() is not None:
         QWidget().setLayout(window.layout())
@@ -40,48 +46,64 @@ def create_rose_data(window, button, data):
     button_for_create = QPushButton('построить розу диаграмм', window)
     button_for_create.resize(200, 50)
     button_for_create.move(500, 700)
-    button_for_create.clicked.connect(lambda: create_rose(input_field, data, window))
+    button_for_create.clicked.connect(lambda: create_rose(input_field, data, window,input_field_filename))
     button_for_create.show()
 
-    label = QLabel("Введите интервал:", window)
-    label.move(100, 716)
-    label.setStyleSheet("font-size: 14px;font-weight: bold;")
-    label.adjustSize()
+    label_interval = QLabel("Введите интервал:", window)
+    label_interval.move(140, 716)
+    label_interval.setStyleSheet("font-size: 14px;font-weight: bold;")
+    label_interval.adjustSize()
 
     input_field = QLineEdit(window)
     input_field.setFixedSize(100, 50)
-    input_field.move(240, 700)
+    input_field.move(280, 700)
     input_field.show()
     input_field.setStyleSheet("font-size: 14px;font-weight: bold;")
-    label.show()
+    label_interval.show()
+
+    label_filename = QLabel("Введите название excel файла:", window)
+    label_filename.move(51, 656)
+    label_filename.setStyleSheet("font-size: 14px;font-weight: bold;")
+    label_filename.adjustSize()
+
+    input_field_filename = QLineEdit(window)
+    input_field_filename.setFixedSize(100, 50)
+    input_field_filename.move(280, 640)
+    input_field_filename.show()
+    input_field_filename.setStyleSheet("font-size: 14px;font-weight: bold;")
+    label_filename.show()
 
 
-def create_rose(input_field, data, window):
+def create_rose(input_field, data, window,input_field_filename):
     layout = QVBoxLayout(window)
     window.setLayout(layout)
+    angles=[]
 
     interval = input_field.text()
     if interval == '':
         interval = 10
     else:
         interval = int(interval)
-    intervals = []
-    intervals.append(0)
+    intervals_azimuths = []
+    intervals_azimuths.append(0)
+    azimuth_data={}
     d = 0
     r = 1
     while d != 180:
         d = interval * r
-        intervals.append(d)
+        intervals_azimuths.append(d)
         r += 1
-    print(intervals)
     data_of_intervals = {}
-    for i in range(1, len(intervals)):
+    for i in range(1, len(intervals_azimuths)):
         quantity_of_angles_in_interval = 0
         for j in range(len(data)):
-            if data[j]["final_beta"] <= intervals[i] and data[j]["final_beta"] > intervals[i - 1]:
+            if (90-data[j]["final_beta"]) % 360 <= intervals_azimuths[i] and (90-data[j]["final_beta"]) % 360 > intervals_azimuths[i - 1]:
                 quantity_of_angles_in_interval += 1
-        data_of_intervals[intervals[i]] = quantity_of_angles_in_interval
-    print(data_of_intervals)
+        angles.append(intervals_azimuths[i])
+        data_of_intervals[str(intervals_azimuths[i-1])+"-"+str(intervals_azimuths[i])] = quantity_of_angles_in_interval
+    print("интервалы:",data_of_intervals)
+
+
     quantity_of_gaps = len(data)
     percents = {}
     for i in data_of_intervals:
@@ -92,20 +114,37 @@ def create_rose(input_field, data, window):
 
     print(percents)
 
+
+
     values = []
+
     for i in percents:
         values.append(percents[i])
 
-    angles = intervals[1:]
 
     print(values)
     print(angles)
 
-    all_angles = np.deg2rad(angles + [a + 180 for a in angles])
-    all_values = values + values
+    mirrored_angles = []
+    mirrored_values = []
+
+    for i in range(len(angles)):
+
+        angle_rad = np.deg2rad(angles[i] - interval / 2)
+        val = values[i]
+
+
+        mirrored_angles.append(angle_rad)
+        mirrored_values.append(val)
+
+
+        mirrored_angles.append(angle_rad + np.pi)
+        mirrored_values.append(val)
+
+    all_angles = mirrored_angles
+    all_values = mirrored_values
     width = np.deg2rad(interval * 0.8)
     tick_degrees = list(range(0, 360, interval))
-
 
     fig, ax = plt.subplots(figsize=(6, 6), subplot_kw={'projection': 'polar'}, facecolor='black')
     ax.set_facecolor('black')
@@ -117,7 +156,7 @@ def create_rose(input_field, data, window):
     ax.set_theta_zero_location('N')
     ax.set_theta_direction(-1)
     ax.grid(color='white', alpha=0.15, linestyle='--')
-
+    ax.set_yticklabels([])
 
     canvas = FigureCanvas(fig)
     current_layout = window.layout()
@@ -134,3 +173,12 @@ def create_rose(input_field, data, window):
 
         current_layout.insertWidget(0, canvas, alignment=Qt.AlignCenter)
         canvas.draw()
+    filename = input_field_filename.text()
+    create_exel(percents, data_of_intervals, intervals_azimuths,filename)
+
+
+
+
+def create_exel(percents,data_of_intervals,intervals,filename):
+    create_exel_file(percents, data_of_intervals, intervals,filename)
+

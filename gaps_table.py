@@ -24,8 +24,9 @@ path = path_to_json
 def table_of_gaps(path_to_json):
     data = json_to_dict_list(path_to_json)
     app = QApplication(sys.argv)
+
     length = len(data)
-    height = 39 * (length)
+    height = 39 * (length+1)
     window = QWidget()
     window.setWindowTitle("Результаты")
     window.setFixedSize(800, 800)
@@ -58,6 +59,14 @@ def table_of_gaps(path_to_json):
     button.resize(200,50)
     button.move(500,700)
     button.clicked.connect(lambda: create_rose_data(window,button,data))
+
+
+
+
+
+
+
+
 
 
     window.show()
