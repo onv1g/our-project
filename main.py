@@ -36,7 +36,9 @@ state = {
 
 
 def add_point(p):
-    dot = QGraphicsEllipseItem(p.x() - 5, p.y() - 5, 10, 10)
+    # Рисуем точку (размер 10 на 10 в сетке 10000 будет выглядеть очень маленьким,
+    # поэтому можно увеличить визуальный размер, если нужно)
+    dot = QGraphicsEllipseItem(p.x() - 10, p.y() - 10, 20, 20)
     dot.setBrush(QColor(255, 0, 0))
     state["scene"].addItem(dot)
     current_action = [dot]
@@ -44,7 +46,7 @@ def add_point(p):
     if state["current_gap_points"]:
         p1 = state["current_gap_points"][-1]
         line = QGraphicsLineItem(p1.x(), p1.y(), p.x(), p.y())
-        line.setPen(QPen(Qt.black, 3))
+        line.setPen(QPen(Qt.black, 5))  # Толщина линии увеличена для сетки 10000
         state["scene"].addItem(line)
         current_action.append(line)
         if gap_key not in state["data_storage"]: state["data_storage"][gap_key] = []
@@ -74,10 +76,13 @@ def open_file():
         state["gap_counter"] = 0
         state["current_gap_points"] = []
         state["history_items"] = []
-        pix = QPixmap(p).scaled(1000, 1000, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
+        # Растягиваем изображение на всю сетку 10000x10000
+        pix = QPixmap(p).scaled(10000, 10000, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         state["scene"].addItem(QGraphicsPixmapItem(pix))
         state["editor"].show()
         state["btn_results"].hide()
+        # Центрируем камеру
+        state["view"].setSceneRect(0, 0, 10000, 10000)
 
 
 def finalize():
@@ -182,14 +187,16 @@ def main():
     editor = QWidget()
     state["editor"] = editor
     ed_layout = QVBoxLayout(editor)
-    scene = QGraphicsScene(0, 0, 1000, 1000)
+    scene = QGraphicsScene(0, 0, 10000, 10000)
     state["scene"] = scene
+
     view = QGraphicsView()
     state["view"] = view
     view.setScene(scene)
     view.setRenderHint(QPainter.Antialiasing)
     view.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
     view.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
+
     ed_layout.addWidget(view)
     btn_confirm = QPushButton("Закончить разметку")
     btn_confirm.setFixedHeight(50)
