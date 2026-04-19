@@ -2,9 +2,6 @@ import sys
 import os
 import math
 import json
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import PyQt5
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QPushButton, QFileDialog, QGraphicsView,
@@ -19,8 +16,6 @@ plugin_path = os.path.join(dirname, 'Qt5', 'plugins', 'platforms')
 if not os.path.exists(plugin_path):
     plugin_path = os.path.join(dirname, 'Qt', 'plugins', 'platforms')
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
-
-# --- ГЛОБАЛЬНОЕ СОСТОЯНИЕ ---
 state = {
     "main_window": None,
     "scene": None,
@@ -36,8 +31,6 @@ state = {
     "table_window": None,
 }
 
-
-# --- АЛГОРИТМЫ ВЫЧИСЛЕНИЙ ---
 def calculate_beta(x1, y1, x2, y2):
     dx = x2 - x1
     dy = y2 - y1
@@ -131,8 +124,6 @@ def open_table_window():
     state["table_window"] = tw
     tw.setWindowTitle("Результаты анализа")
     tw.resize(800, 850)
-
-    # Чтобы rose.py не конфликтовал с Layout, создаем чистый контейнер
     main_layout = QVBoxLayout(tw)
 
     content_widget = QWidget()
@@ -152,13 +143,9 @@ def open_table_window():
     content_layout.addWidget(btn_rose)
 
     def start_rose_process():
-        # Полностью очищаем старый Layout перед запуском rose.py
-        # так как rose.py пытается создать новый QVBoxLayout(window)
         table.setParent(None)
         btn_rose.setParent(None)
         content_widget.setParent(None)
-
-        # Теперь окно чистое, и create_rose_data может спокойно ставить свой Layout
         create_rose_data(tw, btn_rose, data)
 
     btn_rose.clicked.connect(start_rose_process)
