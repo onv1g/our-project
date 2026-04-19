@@ -2,12 +2,8 @@ import os
 import pandas as pd
 
 def create_exel_file(percents,data_of_intervals,intervals,filename):
-
     script_dir = os.path.dirname(os.path.abspath(__file__))
-
     folder_path = os.path.join(script_dir, 'excel_files')
-
-
     numbers=[]
     gaps_thing=[]
     gaps_percents=[]

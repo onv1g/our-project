@@ -1,21 +1,24 @@
 import sys
 import os
-import math
 import json
 import PyQt5
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QPushButton, QFileDialog, QGraphicsView,
                              QGraphicsScene, QGraphicsPixmapItem, QGraphicsLineItem,
-                             QGraphicsEllipseItem, QTableWidget, QTableWidgetItem,
-                             QLineEdit, QLabel, QFrame)
+                             QGraphicsEllipseItem, QTableWidget, QTableWidgetItem)
 from PyQt5.QtGui import QPixmap, QPen, QColor, QPainter, QMouseEvent
 from PyQt5.QtCore import Qt, QObject, QEvent
 from rose import create_rose_data
+from angles import process_gaps_to_list
+
 dirname = os.path.dirname(PyQt5.__file__)
 plugin_path = os.path.join(dirname, 'Qt5', 'plugins', 'platforms')
+
 if not os.path.exists(plugin_path):
     plugin_path = os.path.join(dirname, 'Qt', 'plugins', 'platforms')
+
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
+
 state = {
     "main_window": None,
     "scene": None,
@@ -30,39 +33,6 @@ state = {
     "final_list": [],
     "table_window": None,
 }
-
-def calculate_beta(x1, y1, x2, y2):
-    dx = x2 - x1
-    dy = y2 - y1
-    if dx == 0: return 180
-    if dy == 0: return 90
-    tan = dy / dx
-    tangle = abs(math.degrees(math.atan(tan)))
-    return math.floor(tangle)
-
-
-def process_gaps_to_list(raw_data):
-    final_list = []
-    for gap_id, segments in raw_data.items():
-        if not segments: continue
-        betas = []
-        try:
-            gap_num = int(gap_id.split('_')[1])
-        except:
-            gap_num = 1
-        gap_entry = {"number_of_the_gap": gap_num, "final_beta": 0, "segments": []}
-        for i, seg in enumerate(segments, 1):
-            beta = calculate_beta(seg['x1'], seg['y1'], seg['x2'], seg['y2'])
-            betas.append(beta)
-            gap_entry["segments"].append({
-                "number": i, "beta": beta,
-                "x_1": seg['x1'], "y_1": seg['y1'],
-                "x_2": seg['x2'], "y_2": seg['y2']
-            })
-        if betas:
-            gap_entry["final_beta"] = math.floor(sum(betas) / len(betas))
-        final_list.append(gap_entry)
-    return final_list
 
 
 def add_point(p):
@@ -122,14 +92,12 @@ def open_table_window():
     data = state["final_list"]
     tw = QWidget()
     state["table_window"] = tw
-    tw.setWindowTitle("Результаты анализа")
+    tw.setWindowTitle("Вывести таблицу")
     tw.resize(800, 850)
     main_layout = QVBoxLayout(tw)
-
     content_widget = QWidget()
     content_layout = QVBoxLayout(content_widget)
     main_layout.addWidget(content_widget)
-
     table = QTableWidget(len(data), 2)
     table.setHorizontalHeaderLabels(["Номер разрыва", "Угол β"])
     table.horizontalHeader().setStretchLastSection(True)
@@ -137,8 +105,7 @@ def open_table_window():
         table.setItem(i, 0, QTableWidgetItem(str(entry["number_of_the_gap"])))
         table.setItem(i, 1, QTableWidgetItem(str(entry["final_beta"])))
     content_layout.addWidget(table)
-
-    btn_rose = QPushButton("Построить розу")
+    btn_rose = QPushButton("Построить розу-диаграмму")
     btn_rose.setFixedHeight(50)
     content_layout.addWidget(btn_rose)
 
@@ -201,7 +168,7 @@ def main():
     layout = QVBoxLayout(central)
     menu_container = QWidget()
     menu_layout = QHBoxLayout(menu_container)
-    btn_open = QPushButton("Выберите файл")
+    btn_open = QPushButton("Добавить фото разрывов")
     btn_open.setFixedSize(200, 60)
     btn_open.clicked.connect(open_file)
     btn_results = QPushButton("Вывести таблицу")
@@ -224,7 +191,7 @@ def main():
     view.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
     view.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
     ed_layout.addWidget(view)
-    btn_confirm = QPushButton("Подтвердить")
+    btn_confirm = QPushButton("Закончить разметку")
     btn_confirm.setFixedHeight(50)
     btn_confirm.clicked.connect(finalize)
     ed_layout.addWidget(btn_confirm)
