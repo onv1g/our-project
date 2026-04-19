@@ -54,6 +54,7 @@ def create_rose_data(window, button, data):
     label_interval.setStyleSheet("font-size: 14px;font-weight: bold;")
     label_interval.adjustSize()
 
+
     input_field = QLineEdit(window)
     input_field.setFixedSize(100, 50)
     input_field.move(280, 700)
