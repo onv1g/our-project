@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 from windrose import WindroseAxes
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
-
 import PyQt5
 
 venv_path = r'C:\Users\Дети\PycharmProjects\pythonProject7\.venv'
@@ -97,7 +96,6 @@ def create_rose(input_field, data, window):
         values.append(percents[i])
 
     angles = intervals[1:]
-
     print(values)
     print(angles)
 

@@ -8,11 +8,10 @@ import sys
 import PyQt5
 from rose import create_rose_data
 
-# Находим путь к папке с плагинами PyQt5
+
 dirname = os.path.dirname(PyQt5.__file__)
 plugin_path = os.path.join(dirname, 'Qt5', 'plugins', 'platforms')
 
-# Если такой папки нет, пробуем альтернативный путь (зависит от версии установки)
 if not os.path.exists(plugin_path):
     plugin_path = os.path.join(dirname, 'Qt', 'plugins', 'platforms')
 
