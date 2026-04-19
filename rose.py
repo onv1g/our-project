@@ -54,6 +54,11 @@ def create_rose_data(window, button, data):
     label_interval.setStyleSheet("font-size: 14px;font-weight: bold;")
     label_interval.adjustSize()
 
+    label_interval_180 = QLabel("(Остаток при делении 180 на интервал должен быть равен 0)", window)
+    label_interval_180.move(170, 770)
+    label_interval_180.setStyleSheet("font-size: 14px;font-weight: bold;")
+    label_interval_180.adjustSize()
+
 
     input_field = QLineEdit(window)
     input_field.setFixedSize(100, 50)
@@ -61,6 +66,7 @@ def create_rose_data(window, button, data):
     input_field.show()
     input_field.setStyleSheet("font-size: 14px;font-weight: bold;")
     label_interval.show()
+    label_interval_180.show()
 
     label_filename = QLabel("Введите название excel файла:", window)
     label_filename.move(51, 656)
