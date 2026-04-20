@@ -51,43 +51,23 @@ def add_point(p):
     dot.setBrush(QColor(255, 0, 0))
     state["scene"].addItem(dot)
     current_action.append(dot)
-<<<<<<< HEAD
-=======
-
->>>>>>> ad66c3744d6609d82a9d24f59c64ea584acf88a2
     gap_key = f"gap_{state['gap_counter']}"
-
     if state["current_gap_points"]:
         p1 = state["current_gap_points"][-1]
         line = QGraphicsLineItem(p1.x(), p1.y(), p.x(), p.y())
         line.setPen(QPen(Qt.black, 5))
         state["scene"].addItem(line)
         current_action.append(line)
-<<<<<<< HEAD
         if gap_key not in state["data_storage"]:
             state["data_storage"][gap_key] = []
-=======
-
-        if gap_key not in state["data_storage"]:
-            state["data_storage"][gap_key] = []
-
->>>>>>> ad66c3744d6609d82a9d24f59c64ea584acf88a2
         state["data_storage"][gap_key].append({
             "x1": int(p1.x()), "y1": int(p1.y()),
             "x2": int(p.x()), "y2": int(p.y())
         })
-<<<<<<< HEAD
-=======
-
->>>>>>> ad66c3744d6609d82a9d24f59c64ea584acf88a2
     state["history_items"].append({
         'graphics': current_action,
         'gap_key': gap_key
     })
-<<<<<<< HEAD
-=======
-
->>>>>>> ad66c3744d6609d82a9d24f59c64ea584acf88a2
     state["current_gap_points"].append(p)
     print(state["history_items"])
 
