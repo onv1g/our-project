@@ -85,7 +85,6 @@ def create_rose(input_field, data, window,input_field_filename):
     layout = QVBoxLayout(window)
     window.setLayout(layout)
     angles=[]
-
     interval = input_field.text()
     if interval == '':
         interval = 10
@@ -147,33 +146,25 @@ def create_rose(input_field, data, window,input_field_filename):
 
         mirrored_angles.append(angle_rad + np.pi)
         mirrored_values.append(val)
-
     all_angles = mirrored_angles
     all_values = mirrored_values
     width = np.deg2rad(interval * 0.8)
     tick_degrees = list(range(0, 360, interval))
-
     fig, ax = plt.subplots(figsize=(6, 6), subplot_kw={'projection': 'polar'}, facecolor='black')
     ax.set_facecolor('black')
     ax.bar(all_angles, all_values, width=width, color='#00FF00', edgecolor='black', alpha=0.9)
-
     ax.set_xticks(np.deg2rad(tick_degrees))
     ax.set_xticklabels([f"{d}°" for d in tick_degrees], color='white', fontsize=9)
-
     ax.set_theta_zero_location('N')
     ax.set_theta_direction(-1)
     ax.grid(color='white', alpha=0.15, linestyle='--')
     ax.set_yticklabels([])
-
     canvas = FigureCanvas(fig)
     current_layout = window.layout()
-
     if current_layout is not None:
-
         for i in reversed(range(current_layout.count())):
             item = current_layout.itemAt(i)
             widget = item.widget()
-
             if isinstance(widget, (FigureCanvas, QLineEdit)) and widget != input_field:
                 widget.setParent(None)
 
