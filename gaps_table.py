@@ -16,7 +16,6 @@ if not os.path.exists(plugin_path):
     plugin_path = os.path.join(dirname, 'Qt', 'plugins', 'platforms')
 
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
-
 path = path_to_json
 
 

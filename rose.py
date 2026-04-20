@@ -11,12 +11,15 @@ import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from excel import create_exel_file
 from data_path import path_to_venv
+
 import PyQt5
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
 
+# Собираем путь к venv относительно этой папки
 venv_path = os.path.join(base_dir, '.venv')
 
+# Исправляем путь к плагинам Qt
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = os.path.join(
     venv_path, 'Lib', 'site-packages', 'PyQt5', 'Qt5', 'plugins')
 def create_rose_data(window, button, data):
@@ -40,7 +43,7 @@ def create_rose_data(window, button, data):
     """)
     layout.addWidget(image_input_field, alignment=Qt.AlignCenter)
     layout.addStretch(1)
-    button_for_create = QPushButton('Построить розу-диаграмму', window)
+    button_for_create = QPushButton('построить розу диаграмм', window)
     button_for_create.resize(200, 50)
     button_for_create.move(500, 700)
     button_for_create.clicked.connect(lambda: create_rose(input_field, data, window,input_field_filename))
@@ -51,12 +54,19 @@ def create_rose_data(window, button, data):
     label_interval.setStyleSheet("font-size: 14px;font-weight: bold;")
     label_interval.adjustSize()
 
+    label_interval_180 = QLabel("(Остаток при делении 180 на интервал должен быть равен 0)", window)
+    label_interval_180.move(170, 770)
+    label_interval_180.setStyleSheet("font-size: 14px;font-weight: bold;")
+    label_interval_180.adjustSize()
+
+
     input_field = QLineEdit(window)
     input_field.setFixedSize(100, 50)
     input_field.move(280, 700)
     input_field.show()
     input_field.setStyleSheet("font-size: 14px;font-weight: bold;")
     label_interval.show()
+    label_interval_180.show()
 
     label_filename = QLabel("Введите название excel файла:", window)
     label_filename.move(51, 656)
@@ -99,25 +109,42 @@ def create_rose(input_field, data, window,input_field_filename):
         angles.append(intervals_azimuths[i])
         data_of_intervals[str(intervals_azimuths[i-1])+"-"+str(intervals_azimuths[i])] = quantity_of_angles_in_interval
     print("интервалы:",data_of_intervals)
+
+
     quantity_of_gaps = len(data)
     percents = {}
     for i in data_of_intervals:
         percent = (data_of_intervals[i] / quantity_of_gaps) * 100
         percent = int(percent)
+
         percents[i] = percent
+
     print(percents)
+
+
+
     values = []
+
     for i in percents:
         values.append(percents[i])
+
+
     print(values)
     print(angles)
+
     mirrored_angles = []
     mirrored_values = []
+
     for i in range(len(angles)):
+
         angle_rad = np.deg2rad(angles[i] - interval / 2)
         val = values[i]
+
+
         mirrored_angles.append(angle_rad)
         mirrored_values.append(val)
+
+
         mirrored_angles.append(angle_rad + np.pi)
         mirrored_values.append(val)
 

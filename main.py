@@ -10,6 +10,7 @@ from PyQt5.QtGui import QPixmap, QPen, QColor, QPainter, QMouseEvent
 from PyQt5.QtCore import Qt, QObject, QEvent
 from rose import create_rose_data
 from angles import process_gaps_to_list
+from PyQt5.QtWidgets import QGraphicsTextItem
 
 dirname = os.path.dirname(PyQt5.__file__)
 plugin_path = os.path.join(dirname, 'Qt5', 'plugins', 'platforms')
@@ -36,24 +37,39 @@ state = {
 
 
 def add_point(p):
-    # Рисуем точку (размер 10 на 10 в сетке 10000 будет выглядеть очень маленьким,
-    # поэтому можно увеличить визуальный размер, если нужно)
+    current_action = []
+    if not state["current_gap_points"]:
+        text = QGraphicsTextItem(str(state["gap_counter"]))
+        text.setDefaultTextColor(QColor(255, 0, 0))
+        font = text.font()
+        font.setPointSize(25)
+        text.setFont(font)
+        text.setPos(p.x() + 6, p.y() - 6)
+        state["scene"].addItem(text)
+        current_action.append(text)
     dot = QGraphicsEllipseItem(p.x() - 10, p.y() - 10, 20, 20)
     dot.setBrush(QColor(255, 0, 0))
     state["scene"].addItem(dot)
-    current_action = [dot]
+    current_action.append(dot)
     gap_key = f"gap_{state['gap_counter']}"
     if state["current_gap_points"]:
         p1 = state["current_gap_points"][-1]
         line = QGraphicsLineItem(p1.x(), p1.y(), p.x(), p.y())
-        line.setPen(QPen(Qt.black, 5))  # Толщина линии увеличена для сетки 10000
+        line.setPen(QPen(Qt.black, 5))
         state["scene"].addItem(line)
         current_action.append(line)
-        if gap_key not in state["data_storage"]: state["data_storage"][gap_key] = []
-        state["data_storage"][gap_key].append(
-            {"x1": int(p1.x()), "y1": int(p1.y()), "x2": int(p.x()), "y2": int(p.y())})
-    state["history_items"].append({'graphics': current_action, 'gap_key': gap_key})
+        if gap_key not in state["data_storage"]:
+            state["data_storage"][gap_key] = []
+        state["data_storage"][gap_key].append({
+            "x1": int(p1.x()), "y1": int(p1.y()),
+            "x2": int(p.x()), "y2": int(p.y())
+        })
+    state["history_items"].append({
+        'graphics': current_action,
+        'gap_key': gap_key
+    })
     state["current_gap_points"].append(p)
+    print(state["history_items"])
 
 
 def undo_last():
@@ -76,12 +92,10 @@ def open_file():
         state["gap_counter"] = 0
         state["current_gap_points"] = []
         state["history_items"] = []
-        # Растягиваем изображение на всю сетку 10000x10000
         pix = QPixmap(p).scaled(10000, 10000, Qt.IgnoreAspectRatio, Qt.SmoothTransformation)
         state["scene"].addItem(QGraphicsPixmapItem(pix))
         state["editor"].show()
         state["btn_results"].hide()
-        # Центрируем камеру
         state["view"].setSceneRect(0, 0, 10000, 10000)
 
 
@@ -119,7 +133,6 @@ def open_table_window():
         btn_rose.setParent(None)
         content_widget.setParent(None)
         create_rose_data(tw, btn_rose, data)
-
     btn_rose.clicked.connect(start_rose_process)
     tw.show()
 
@@ -189,14 +202,12 @@ def main():
     ed_layout = QVBoxLayout(editor)
     scene = QGraphicsScene(0, 0, 10000, 10000)
     state["scene"] = scene
-
     view = QGraphicsView()
     state["view"] = view
     view.setScene(scene)
     view.setRenderHint(QPainter.Antialiasing)
     view.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
     view.setResizeAnchor(QGraphicsView.AnchorUnderMouse)
-
     ed_layout.addWidget(view)
     btn_confirm = QPushButton("Закончить разметку")
     btn_confirm.setFixedHeight(50)
