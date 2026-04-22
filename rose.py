@@ -130,11 +130,11 @@ def create_rose(input_field, data, window,input_field_filename):
         angle_rad = np.deg2rad(angles[i] - interval / 2)
         val = values[i]
 
-        # Добавляем основной угол (ограничиваем 360 градусами через % 2*pi)
+
         mirrored_angles.append(angle_rad % (2 * np.pi))
         mirrored_values.append(val)
 
-        # Добавляем зеркальный угол (ограничиваем 360 градусами через % 2*pi)
+
         mirrored_angles.append((angle_rad + np.pi) % (2 * np.pi))
         mirrored_values.append(val)
     all_angles = mirrored_angles
