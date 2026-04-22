@@ -90,18 +90,7 @@ def create_rose(input_field, data, window,input_field_filename):
         interval = 10
     else:
         interval = int(interval)
-
     intervals_azimuths = list(range(0, 361, interval))
-
-    intervals_azimuths = []
-    intervals_azimuths.append(0)
-    d = 0
-    r = 1
-    while d != 180:
-        d = interval * r
-        intervals_azimuths.append(d)
-        r += 1
-
     data_of_intervals = {}
     for i in range(1, len(intervals_azimuths)):
         quantity_of_angles_in_interval = 0
