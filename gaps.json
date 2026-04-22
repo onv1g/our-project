@@ -1,15 +1,57 @@
 [
   {
     "number_of_the_gap": 1,
-    "final_beta": 180,
+    "final_beta": 138,
     "segments": [
       {
         "number": 1,
-        "beta": 179.8,
-        "x_1": 4996,
-        "y_1": 5092,
-        "x_2": 4681,
-        "y_2": 5091
+        "beta": 138.5,
+        "x_1": 6049,
+        "y_1": 5221,
+        "x_2": 5322,
+        "y_2": 4577
+      }
+    ]
+  },
+  {
+    "number_of_the_gap": 3,
+    "final_beta": 51,
+    "segments": [
+      {
+        "number": 1,
+        "beta": 50.9,
+        "x_1": 5722,
+        "y_1": 5990,
+        "x_2": 6401,
+        "y_2": 5155
+      }
+    ]
+  },
+  {
+    "number_of_the_gap": 4,
+    "final_beta": 22,
+    "segments": [
+      {
+        "number": 1,
+        "beta": 21.7,
+        "x_1": 5918,
+        "y_1": 6109,
+        "x_2": 6890,
+        "y_2": 5722
+      }
+    ]
+  },
+  {
+    "number_of_the_gap": 5,
+    "final_beta": 173,
+    "segments": [
+      {
+        "number": 1,
+        "beta": 173.4,
+        "x_1": 5114,
+        "y_1": 5161,
+        "x_2": 6985,
+        "y_2": 5376
       }
     ]
   }

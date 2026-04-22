@@ -90,15 +90,7 @@ def create_rose(input_field, data, window,input_field_filename):
         interval = 10
     else:
         interval = int(interval)
-    intervals_azimuths = []
-    intervals_azimuths.append(0)
-    azimuth_data={}
-    d = 0
-    r = 1
-    while d != 180:
-        d = interval * r
-        intervals_azimuths.append(d)
-        r += 1
+    intervals_azimuths = list(range(0, 361, interval))
     data_of_intervals = {}
     for i in range(1, len(intervals_azimuths)):
         quantity_of_angles_in_interval = 0
@@ -129,22 +121,21 @@ def create_rose(input_field, data, window,input_field_filename):
 
 
     print(values)
-    print(angles)
+    print("углы",angles)
 
     mirrored_angles = []
     mirrored_values = []
 
     for i in range(len(angles)):
-
         angle_rad = np.deg2rad(angles[i] - interval / 2)
         val = values[i]
 
-
-        mirrored_angles.append(angle_rad)
+        # Добавляем основной угол (ограничиваем 360 градусами через % 2*pi)
+        mirrored_angles.append(angle_rad % (2 * np.pi))
         mirrored_values.append(val)
 
-
-        mirrored_angles.append(angle_rad + np.pi)
+        # Добавляем зеркальный угол (ограничиваем 360 градусами через % 2*pi)
+        mirrored_angles.append((angle_rad + np.pi) % (2 * np.pi))
         mirrored_values.append(val)
     all_angles = mirrored_angles
     all_values = mirrored_values
