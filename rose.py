@@ -92,7 +92,6 @@ def create_rose(input_field, data, window,input_field_filename):
         interval = int(interval)
     intervals_azimuths = []
     intervals_azimuths.append(0)
-    azimuth_data={}
     d = 0
     r = 1
     while d != 180:

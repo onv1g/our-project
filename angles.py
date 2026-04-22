@@ -26,7 +26,6 @@ def process_gaps_to_list(raw_data):
         for i, seg in enumerate(segments, 1):
             beta = calculate_beta(seg['x1'], seg['y1'], seg['x2'], seg['y2'])
             betas.append(beta)
-
             gap_entry["segments"].append({
                 "number": i,
                 "beta": round(beta, 1),
