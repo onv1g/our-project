@@ -5,19 +5,17 @@ import PyQt5
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                              QHBoxLayout, QPushButton, QFileDialog, QGraphicsView,
                              QGraphicsScene, QGraphicsPixmapItem, QGraphicsLineItem,
-                             QGraphicsEllipseItem, QTableWidget, QTableWidgetItem)
+                             QGraphicsEllipseItem, QTableWidget, QTableWidgetItem,
+                             QGraphicsTextItem)
 from PyQt5.QtGui import QPixmap, QPen, QColor, QPainter, QMouseEvent
 from PyQt5.QtCore import Qt, QObject, QEvent
 from rose import create_rose_data
 from angles import process_gaps_to_list
-from PyQt5.QtWidgets import QGraphicsTextItem
 
 dirname = os.path.dirname(PyQt5.__file__)
 plugin_path = os.path.join(dirname, 'Qt5', 'plugins', 'platforms')
-
 if not os.path.exists(plugin_path):
     plugin_path = os.path.join(dirname, 'Qt', 'plugins', 'platforms')
-
 os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = plugin_path
 
 state = {
@@ -39,6 +37,7 @@ state = {
 def add_point(p):
     current_action = []
     if not state["current_gap_points"]:
+        state["gap_counter"] += 1
         text = QGraphicsTextItem(str(state["gap_counter"]))
         text.setDefaultTextColor(QColor(255, 0, 0))
         font = text.font()
@@ -58,18 +57,20 @@ def add_point(p):
         line.setPen(QPen(Qt.black, 5))
         state["scene"].addItem(line)
         current_action.append(line)
+
         if gap_key not in state["data_storage"]:
             state["data_storage"][gap_key] = []
         state["data_storage"][gap_key].append({
             "x1": int(p1.x()), "y1": int(p1.y()),
             "x2": int(p.x()), "y2": int(p.y())
         })
+
     state["history_items"].append({
         'graphics': current_action,
-        'gap_key': gap_key
+        'gap_key': gap_key,
+        'is_first_point': len(state["current_gap_points"]) == 0
     })
     state["current_gap_points"].append(p)
-    print(state["history_items"])
 
 
 def undo_last():
@@ -82,6 +83,8 @@ def undo_last():
             state["data_storage"][key].pop()
         if state["current_gap_points"]:
             state["current_gap_points"].pop()
+        if last.get('is_first_point'):
+            state["gap_counter"] -= 1
 
 
 def open_file():
@@ -111,12 +114,13 @@ def open_table_window():
     data = state["final_list"]
     tw = QWidget()
     state["table_window"] = tw
-    tw.setWindowTitle("Вывести таблицу")
+    tw.setWindowTitle("Таблица разломов")
     tw.resize(800, 850)
     main_layout = QVBoxLayout(tw)
     content_widget = QWidget()
     content_layout = QVBoxLayout(content_widget)
     main_layout.addWidget(content_widget)
+
     table = QTableWidget(len(data), 2)
     table.setHorizontalHeaderLabels(["Номер разрыва", "Угол β"])
     table.horizontalHeader().setStretchLastSection(True)
@@ -124,6 +128,7 @@ def open_table_window():
         table.setItem(i, 0, QTableWidgetItem(str(entry["number_of_the_gap"])))
         table.setItem(i, 1, QTableWidgetItem(str(entry["final_beta"])))
     content_layout.addWidget(table)
+
     btn_rose = QPushButton("Построить розу-диаграмму")
     btn_rose.setFixedHeight(50)
     content_layout.addWidget(btn_rose)
@@ -133,6 +138,7 @@ def open_table_window():
         btn_rose.setParent(None)
         content_widget.setParent(None)
         create_rose_data(tw, btn_rose, data)
+
     btn_rose.clicked.connect(start_rose_process)
     tw.show()
 
@@ -144,6 +150,7 @@ class EventFilter(QObject):
                 f = 1.25 if event.angleDelta().y() > 0 else 0.8
                 state["view"].scale(f, f)
                 return True
+
             if event.type() == QEvent.MouseButtonPress:
                 if event.button() == Qt.LeftButton:
                     if state["shift_pressed"]:
@@ -155,23 +162,26 @@ class EventFilter(QObject):
                         fake = QMouseEvent(event.type(), event.pos(), Qt.LeftButton, Qt.LeftButton, event.modifiers())
                         state["view"].mousePressEvent(fake)
                         return True
+
             if event.type() == QEvent.MouseButtonRelease:
                 if event.button() == Qt.LeftButton:
                     state["view"].setDragMode(QGraphicsView.NoDrag)
                     return False
+
         if event.type() == QEvent.KeyPress:
             if event.key() == Qt.Key_Shift:
                 if not state["shift_pressed"]:
                     state["shift_pressed"] = True
-                    state["gap_counter"] += 1
                     state["current_gap_points"] = []
                 return True
             if event.modifiers() & Qt.ControlModifier and event.key() == Qt.Key_Z:
                 undo_last()
                 return True
+
         if event.type() == QEvent.KeyRelease and event.key() == Qt.Key_Shift:
             state["shift_pressed"] = False
             return True
+
         return super().eventFilter(obj, event)
 
 
@@ -179,7 +189,7 @@ def main():
     app = QApplication(sys.argv)
     win = QMainWindow()
     state["main_window"] = win
-    win.setWindowTitle("Gap Mapper Pro")
+    win.setWindowTitle("SKAT")
     win.resize(1000, 850)
     central = QWidget()
     win.setCentralWidget(central)
