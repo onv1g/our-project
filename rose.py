@@ -131,12 +131,18 @@ def create_rose(input_field, data, window,input_field_filename):
         val = values[i]
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d6eb9c268c7668a1ee1ad2170e125fa749a636d5
         mirrored_angles.append(angle_rad % (2 * np.pi))
         mirrored_values.append(val)
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d6eb9c268c7668a1ee1ad2170e125fa749a636d5
         mirrored_angles.append((angle_rad + np.pi) % (2 * np.pi))
         mirrored_values.append(val)
     all_angles = mirrored_angles
