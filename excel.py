@@ -14,7 +14,7 @@ def create_exel_file(percents,data_of_intervals,intervals,filename):
     for i in range(1,len(intervals)):
         numbers.append(i)
 
-    n = len(intervals) - 1
+    n = len(intervals) -1
     mid = n // 2
     q1 = n // 4
     q3 = (n // 4) * 3
@@ -22,7 +22,7 @@ def create_exel_file(percents,data_of_intervals,intervals,filename):
     for i in range(1, len(intervals)):
         intervals_angles.append(f"{intervals[i - 1] + 1}-{intervals[i]}")
         intervals_beta.append(f"{(90 - intervals[i - 1]) % 360}-{(90 - intervals[i]) % 360}")
-        if q1 < i < mid:
+        if q1 <= i - 1 <= mid:
             idx_mirror = i - 1 + mid
             if idx_mirror < len(orig_gaps) and orig_gaps[idx_mirror] != 0:
                 gaps_thing.append(orig_gaps[idx_mirror])
@@ -31,16 +31,19 @@ def create_exel_file(percents,data_of_intervals,intervals,filename):
                 gaps_thing.append(orig_gaps[i - 1])
                 gaps_percents.append(orig_percents[i - 1])
 
-        elif i < q3:
-            idx_mirror = i - 1 - mid
+        elif mid <= i - 1 <= q3:
+            idx_mirror = i-1 - mid
             if idx_mirror >= 0 and orig_gaps[idx_mirror] != 0:
                 gaps_thing.append(orig_gaps[idx_mirror])
                 gaps_percents.append(orig_percents[idx_mirror])
+
             else:
+
                 gaps_thing.append(orig_gaps[i - 1])
                 gaps_percents.append(orig_percents[i - 1])
 
         else:
+
 
             gaps_thing.append(orig_gaps[i - 1])
             gaps_percents.append(orig_percents[i - 1])

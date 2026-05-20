@@ -43,7 +43,7 @@ def create_rose_data(window, button, data):
     """)
     layout.addWidget(image_input_field, alignment=Qt.AlignCenter)
     layout.addStretch(1)
-    button_for_create = QPushButton('построить розу диаграмм', window)
+    button_for_create = QPushButton('Построить розу-диаграмму', window)
     button_for_create.resize(200, 50)
     button_for_create.move(500, 700)
     button_for_create.clicked.connect(lambda: create_rose(input_field, data, window,input_field_filename))
@@ -90,18 +90,7 @@ def create_rose(input_field, data, window,input_field_filename):
         interval = 10
     else:
         interval = int(interval)
-
     intervals_azimuths = list(range(0, 361, interval))
-
-    intervals_azimuths = []
-    intervals_azimuths.append(0)
-    d = 0
-    r = 1
-    while d != 180:
-        d = interval * r
-        intervals_azimuths.append(d)
-        r += 1
-
     data_of_intervals = {}
     for i in range(1, len(intervals_azimuths)):
         quantity_of_angles_in_interval = 0
@@ -141,11 +130,13 @@ def create_rose(input_field, data, window,input_field_filename):
         angle_rad = np.deg2rad(angles[i] - interval / 2)
         val = values[i]
 
-        # Добавляем основной угол (ограничиваем 360 градусами через % 2*pi)
+
+
         mirrored_angles.append(angle_rad % (2 * np.pi))
         mirrored_values.append(val)
 
-        # Добавляем зеркальный угол (ограничиваем 360 градусами через % 2*pi)
+
+
         mirrored_angles.append((angle_rad + np.pi) % (2 * np.pi))
         mirrored_values.append(val)
     all_angles = mirrored_angles
